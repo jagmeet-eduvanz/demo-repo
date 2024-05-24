@@ -19,8 +19,11 @@ jobs:
         
         JIRA_PATTERN="JP-[0-9]+"
         
+        # Get the range of commits in the push event
+        RANGE="${{ github.event.before }}..${{ github.sha }}"
+        
         # Iterate through commits in the push
-        for commit in $(git log --format=%H ${{ github.event.before }}..${{ github.sha }}); do
+        for commit in $(git log --format=%H $RANGE); do
           # Get commit message
           message=$(git log --format=%B -n 1 $commit)
           
