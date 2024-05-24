@@ -11,7 +11,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [20.x]  # Specify Node.js version
+        node-version: [20.x]
 
     steps:
       - name: Checkout repository
@@ -22,17 +22,23 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
+      - name: Debugging
+        run: |
+          git fetch --depth=1 origin +refs/heads/main:refs/remotes/origin/main
+          echo "Latest commit SHA in main: $(git rev-parse origin/main)"
+          git log --oneline origin/main
+
       - name: Enforce commit message conventions
         run: |
           #!/bin/bash
           
           JIRA_PATTERN="JP-[0-9]+"
           
-          # Get the range of commits in the push event
-          RANGE="${{ github.event.before }}..${{ github.sha }}"
+          # Get the latest commit SHA in main
+          LATEST_COMMIT=$(git rev-parse origin/main)
           
-          # Iterate through commits in the push
-          for commit in $(git log --format=%H $RANGE); do
+          # Iterate through all commits in main
+          for commit in $(git log --format=%H $LATEST_COMMIT); do
             # Get commit message
             message=$(git log --format=%B -n 1 $commit)
             
