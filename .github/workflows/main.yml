@@ -22,9 +22,6 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Install dependencies
-        run: npm install
-
       - name: Enforce commit message conventions
         run: |
           #!/bin/bash
